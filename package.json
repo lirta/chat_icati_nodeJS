@@ -1,0 +1,20 @@
+{
+  "name": "socketchat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "psmti.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon psmti.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "fs-extra": "^10.0.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.12",
+    "socket.io": "^2.3.0",
+    "util": "^0.12.4"
+  }
+}
