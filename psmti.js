@@ -9,15 +9,15 @@ const util = require('util')
 //participants = [];
 
 app.get('/', (req, res) => {
-    res.send("ICATI NODE JS")
+    res.send("PSMTI NODE JS")
 });
 
 //MySQL npm install socket.io mysql
 var db = mysql.createPool({
     host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'icati',
+    user: 'qkzxfwbkda',
+    password: 'KLie98fJ',
+    database: 'qkzxfwbkda',
     charset: 'utf8mb4',
 });
 
@@ -27,7 +27,7 @@ db.getConnection(function (err) {
     else console.log('db connected');
 });
 
-var baseurl = "192.168.1.36:3000";
+var baseurl = "chat.psmtiriau.org:3000";
 
 require('./chatlist.js')(io, db, baseurl);
 require('./chatroom.js')(io, db, util, baseurl);

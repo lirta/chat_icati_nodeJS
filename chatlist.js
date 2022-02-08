@@ -73,26 +73,24 @@ module.exports = (io, db, baseurl) => {
             var newdata = [];
 
             //get data provinsi
-            var sqlRoomProvinsi = "SELECT * FROM organization";
-            db.query(sqlRoomProvinsi,  async function (err, dataProvinsi) {
+            var sqlRoomProvinsi = "SELECT * FROM provinsi WHERE provinsiId = ?";
+            db.query(sqlRoomProvinsi, provinsiId, async function (err, dataProvinsi) {
                 if (err) {
                     resolve({ status: false, message: 'Sorry database is error' });
                     console.log(err);
                 } else {
-                    let lastMsg = await getLastMessage("0");
-                        let totalMember = await getCountRoomProvinsi("0");
-                        //let unreadTotal = await getTotalUnreadMessage(mId, dataProvinsi[0]['organizationId']);
-                        let unreadTotal = await getTotalUnreadMsg("0", mId);
-
-                        
+                    if (dataProvinsi.length > 0) {
+                        let lastMsg = await getLastMessage(dataProvinsi[0]['provinsiId']);
+                        let totalMember = await getCountRoomProvinsi(dataProvinsi[0]['provinsiId']);
+                        //let unreadTotal = await getTotalUnreadMessage(mId, dataProvinsi[0]['provinsiId']);
+                        let unreadTotal = await getTotalUnreadMsg(dataProvinsi[0]['provinsiId'], mId);
                         const dataProv = {
-                            "roomId": "0",
-                            "roomName": "ICATI",
-                            "roomLogo":'',
+                            "roomId": dataProvinsi[0]['provinsiId'],
+                            "roomName": dataProvinsi[0]['provinsiName'],
                             "chatId": lastMsg.length > 0 ? lastMsg[0]['chatId'] : "",
                             "senderId": lastMsg.length > 0 ? lastMsg[0]['senderId'] : "",
                             "senderName": lastMsg.length > 0 ? lastMsg[0]['mName'] : "",
-                            "senderUsername": lastMsg.length > 0 ? lastMsg[0]['mEmail'] : "",
+                            "senderUsername": lastMsg.length > 0 ? lastMsg[0]['mUsername'] : "",
                             "chatData": lastMsg.length > 0 ? lastMsg[0]['chatData'] : "",
                             "chatType": lastMsg.length > 0 ? lastMsg[0]['chatType'] : "",
                             "chatTimestamp": lastMsg.length > 0 ? lastMsg[0]['chatTimestamp'] : "",
@@ -101,68 +99,39 @@ module.exports = (io, db, baseurl) => {
                         }
 
                         newdata.push(dataProv);
-
-
-                    if (dataProvinsi.length > 0) {
-
-                        for(var a =0; a< dataProvinsi.length; a++){
-                            
-                            let lastMsg = await getLastMessage(dataProvinsi[a]['organizationId']);
-                            let totalMember = await getCountRoomProvinsi(dataProvinsi[a]['organizationId']);
-                            //let unreadTotal = await getTotalUnreadMessage(mId, dataProvinsi[a]['organizationId']);
-                            let unreadTotal = await getTotalUnreadMsg(dataProvinsi[a]['organizationId'], mId);
-                            const dataProv = {
-                                "roomId": dataProvinsi[a]['organizationId'],
-                                "roomName": dataProvinsi[a]['organizationName'],
-                                "roomLogo":dataProvinsi[a]['organizationFile'],
-                                "chatId": lastMsg.length > 0 ? lastMsg[a]['chatId'] : "",
-                                "senderId": lastMsg.length > 0 ? lastMsg[a]['senderId'] : "",
-                                "senderName": lastMsg.length > 0 ? lastMsg[a]['mName'] : "",
-                                "senderUsername": lastMsg.length > 0 ? lastMsg[a]['mEmail'] : "",
-                                "chatData": lastMsg.length > 0 ? lastMsg[a]['chatData'] : "",
-                                "chatType": lastMsg.length > 0 ? lastMsg[a]['chatType'] : "",
-                                "chatTimestamp": lastMsg.length > 0 ? lastMsg[a]['chatTimestamp'] : "",
-                                "totalMember": totalMember[0]['total'],
-                                "totalUnreadMsg": unreadTotal
-                            }
-                            newdata.push(dataProv);
-                        }
-                        
-                 resolve({ status: true, message: newdata });
-
-                        // console.log(dataProv);
                     }
 
                     //get data kabupaten
-                    // var sqlRoomKabupaten = "SELECT * FROM kabupaten WHERE kabupatenId = ?";
-                    // db.query(sqlRoomKabupaten, kabupatenId, async function (err, dataKabupaten) {
-                    //     if (err) {
-                    //         resolve({ status: false, message: 'Sorry database is error' });
-                    //         console.log(err);
-                    //     } else {
-                    //         if (dataKabupaten.length > 0) {
-                    //             let lastMsg = await getLastMessage(dataKabupaten[0]['kabupatenId']);
-                    //             let totalMember = await getCountRoomKabupaten(dataKabupaten[0]['kabupatenId']);
-                    //             //let unreadTotal = await getTotalUnreadMessage(mId, dataKabupaten[0]['kabupatenId']);
-                    //             let unreadTotal = await getTotalUnreadMsg(dataKabupaten[0]['kabupatenId'], mId);
-                    //             const dataKab = {
-                    //                 "roomId": dataKabupaten[0]['kabupatenId'],
-                    //                 "roomName": dataKabupaten[0]['kabupatenName'],
-                    //                 "chatId": lastMsg.length > 0 ? lastMsg[0]['chatId'] : "",
-                    //                 "senderId": lastMsg.length > 0 ? lastMsg[0]['senderId'] : "",
-                    //                 "senderName": lastMsg.length > 0 ? lastMsg[0]['mName'] : "",
-                    //                 "senderUsername": lastMsg.length > 0 ? lastMsg[0]['mUsername'] : "",
-                    //                 "chatData": lastMsg.length > 0 ? lastMsg[0]['chatData'] : "",
-                    //                 "chatType": lastMsg.length > 0 ? lastMsg[0]['chatType'] : "",
-                    //                 "chatTimestamp": lastMsg.length > 0 ? lastMsg[0]['chatTimestamp'] : "",
-                    //                 "totalMember": totalMember[0]['total'],
-                    //                 "totalUnreadMsg": unreadTotal
-                    //             }
-                    //             newdata.push(dataKab);
-                    //         }
+                    var sqlRoomKabupaten = "SELECT * FROM kabupaten WHERE kabupatenId = ?";
+                    db.query(sqlRoomKabupaten, kabupatenId, async function (err, dataKabupaten) {
+                        if (err) {
+                            resolve({ status: false, message: 'Sorry database is error' });
+                            console.log(err);
+                        } else {
+                            if (dataKabupaten.length > 0) {
+                                let lastMsg = await getLastMessage(dataKabupaten[0]['kabupatenId']);
+                                let totalMember = await getCountRoomKabupaten(dataKabupaten[0]['kabupatenId']);
+                                //let unreadTotal = await getTotalUnreadMessage(mId, dataKabupaten[0]['kabupatenId']);
+                                let unreadTotal = await getTotalUnreadMsg(dataKabupaten[0]['kabupatenId'], mId);
+                                const dataKab = {
+                                    "roomId": dataKabupaten[0]['kabupatenId'],
+                                    "roomName": dataKabupaten[0]['kabupatenName'],
+                                    "chatId": lastMsg.length > 0 ? lastMsg[0]['chatId'] : "",
+                                    "senderId": lastMsg.length > 0 ? lastMsg[0]['senderId'] : "",
+                                    "senderName": lastMsg.length > 0 ? lastMsg[0]['mName'] : "",
+                                    "senderUsername": lastMsg.length > 0 ? lastMsg[0]['mUsername'] : "",
+                                    "chatData": lastMsg.length > 0 ? lastMsg[0]['chatData'] : "",
+                                    "chatType": lastMsg.length > 0 ? lastMsg[0]['chatType'] : "",
+                                    "chatTimestamp": lastMsg.length > 0 ? lastMsg[0]['chatTimestamp'] : "",
+                                    "totalMember": totalMember[0]['total'],
+                                    "totalUnreadMsg": unreadTotal
+                                }
+                                newdata.push(dataKab);
+                            }
 
-                    //     }
-                    // });
+                            resolve({ status: true, message: newdata });
+                        }
+                    });
                 }
             });
         });
@@ -170,7 +139,7 @@ module.exports = (io, db, baseurl) => {
 
     function getLastMessage(roomId) {
         return new Promise(resolve => {
-            var query = 'SELECT member.mEmail, member.mName, room_chat.* FROM room_chat JOIN member ON member.mId = room_chat.senderId WHERE chatId IN (SELECT MAX(chatId) FROM room_chat WHERE roomId = ?)';
+            var query = 'SELECT member.mUsername, member.mName, room_chat.* FROM room_chat JOIN member ON member.mId = room_chat.senderId WHERE chatId IN (SELECT MAX(chatId) FROM room_chat WHERE roomId = ?)';
             db.query(query, roomId, function (error, dataLastMsg) {
                 if (error) {
                     console.log(error)
@@ -183,8 +152,8 @@ module.exports = (io, db, baseurl) => {
 
     function getCountRoomProvinsi(roomId) {
         return new Promise(resolve => {
-            var query = "SELECT COUNT(mId) as total FROM member WHERE mStatus='y' AND mDeleted=0 ";
-            db.query(query,  function (error, dataCount) {
+            var query = "SELECT COUNT(mId) as total FROM member WHERE mStatus='y' AND mDeleted=0 AND provinsiId = ?";
+            db.query(query, roomId, function (error, dataCount) {
                 if (error) {
                     console.log(error)
                 } else {
